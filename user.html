@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Storage home</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="home.html">Web Storage</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+      <ul class="nav navbar-nav navbar-right" id="navegacion">
+        <li><a href="#"><i class="fa fa-shopping-cart" aria-hideen="true"> Compras</i></a></li>
+        <li><a href="#"><i class="fa fa-truck" aria-hideen="true"> Pedidos</i></a></li>
+        <li><a href="#"><i class="fa fa-shopping-bag" aria-hideen="true"> Entregas</i></a></li>
+        <li><a href="#"><i class="fa fa-users" aria-hideen="true"> Contacto</i></a></li>
+        <li id="adminPanel" style="display: none;"><a href="admin.html"><i class="fa fa-lock" aria-hideen="true"> Panel Administrativo</i></a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i> User Management <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="user.html" id="session"></a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#" id="cerrarSession" onclick="removeSession();">Salir</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+	<div class="container">
+		<h1 class="text-warning text-center" id="text-alert"></h1>
+		<h1>Panel usuario</h1>
+		<span id="userName"></span>
+		<h3>Cambiar datos</h3>
+		<div class="col-sm-8 col-md-6">
+			<form class="form-group">
+				<div class="form-group">
+					<input type="text" class="form-control" name="user" id="user" placeholder="Usuario">
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" name="pass" id="pass" placeholder="Contraseña">
+				</div>
+				<div class="btn btn-group">
+					<button  id="btn" type="button" class="btn btn-primary">Guardar</button>
+				</div>
+		</form>
+		</div>
+	</div>
+<script src='js/jquery-1.12.4.min.js'></script>
+<script src='js/bootstrap.min.js'></script>
+<script src='js/checkSession.js'></script>
+<script src='js/users.js'></script>
+<script>
+//Impide boton atras
+window.onload = function(){
+	if(window.history.forward(1) != null)   window.history.forward(1);
+}
+//Chequea session
+checkSession();
+
+//Cambiar user
+document.getElementById('btn').addEventListener('click', function(){
+	var userInput = document.getElementById('user').value;
+	var data = sessionStorage.setItem('session_start', userInput);
+	console.log('cambiado ' + userInput);
+});
+
+//Bloquea boton
+if(sessionStorage.key('session_start')){
+	console.log('si hay una session ' + sessionStorage.getItem('session_start'));
+	document.getElementById('cerrarSession').style.display = 'block';
+	document.getElementById('navegacion').style.display = 'block';
+	if(sessionStorage.getItem('session_start') == userAdmin.user){
+		console.log('es admin');
+		document.getElementById('adminPanel').style.display = 'block';
+	}else{
+		console.log('es invitado');
+	}
+}else{
+	console.log('no hay una session');
+	document.getElementById('cerrarSession').style.display = 'none';
+	document.getElementById('navegacion').style.display = 'none';
+	document.getElementById('text-alert').innerHTML = '404 Error de session, seras redireccioando en 2 segundos';
+	setTimeout(function(){
+		location.replace('./');
+	},2000);
+}
+
+//Elimina la session
+function removeSession(){
+	if(sessionStorage.key('session_start')){
+		if(confirm('Seguro que desea cerrar session')){
+			sessionStorage.removeItem('session_start');
+			location.replace('./');
+		}
+	}else{
+		alert('No hay session para cerrar');
+	}
+}
+//Muestra la session
+var data = sessionStorage.getItem('session_start');
+document.getElementById('session').innerHTML = data.toUpperCase();
+document.getElementById('userName').innerHTML = data.toUpperCase();
+
+</script>
+</body>
+</html>

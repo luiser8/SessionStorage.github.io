@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Storage</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body>
+<div class="jumbotron"></div>
+	<div class="container">
+		<span class="pull-right" id="session"></span>
+			<div class="col-md-6 col-md-offset-3">
+				<form class="form-group">
+					<div class="form-group">
+						<input type="text" class="form-control" name="user" id="user" placeholder="User">
+					</div>
+					<div class="form-group">
+						<input type="password" class="form-control" name="pass" id="pass" placeholder="Password">
+					</div>
+					<button type="button" class="btn btn-default" id="btn_iniciar">Iniciar session</button>
+				</form>
+			</div>
+	</div>
+<script src='js/jquery-1.12.4.min.js'></script>
+<script src='js/bootstrap.min.js'></script>
+<script src='js/checkSession.js'></script>
+<script src='js/users.js'></script>
+<script>
+//Impide boton atras
+window.onload = function(){
+	if(window.history.forward(1) != null) window.history.forward(1);
+}
+//Valores del inputs
+var inputUser = document.getElementById('user');
+var inputPass = document.getElementById('pass');
+var btn = document.getElementById('btn_iniciar');
+
+//Chequea session
+checkSession();
+
+//Valida el usuario
+function validUser(){
+//Instancia objeto y lo chequea
+	if(userAdmin.user == inputUser.value && userAdmin.pass == inputPass.value){
+		crearSession();
+	}else if(userInvitado.user == inputUser.value && userInvitado.pass == inputPass.value){
+		crearSession();
+	}else{
+		alert('Usuario invalido');
+	}
+}
+
+//Validar inputs
+function validInputs(){
+	if(inputUser.value == ''){
+		alert('Debes llenar el campo de User');
+	}else if(inputPass.value == ''){
+		alert('Debes llenar el campo de Password');
+	}else{
+		validUser();
+	}
+}
+
+//Event boton crear session
+btn.addEventListener('click', validInputs);
+
+//Crear la session
+function crearSession(){
+	if(!sessionStorage.key('session_start')){
+		sessionStorage.setItem('session_start', inputUser.value);
+		console.log(inputUser.value);
+		location.replace('/home.html');
+	}
+}
+
+//Muestra la session
+var data = sessionStorage.getItem('session_start');
+document.getElementById('session').innerHTML = data;
+
+</script>
+</body>
+</html>
